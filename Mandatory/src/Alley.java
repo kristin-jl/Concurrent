@@ -14,17 +14,17 @@ class Alley {
 				up.P();
 				if (!passing) {
 					passing = true;
+					down.P();
 				}
 				inAlley++;
-				down.P();
 				up.V();
 			default:
 				down.P();
 				if (!passing) {
 					passing = true;
+					up.P();
 				}
 				inAlley++;
-				up.P();
 				down.V();
 			}
 	}
