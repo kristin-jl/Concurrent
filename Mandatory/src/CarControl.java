@@ -2,7 +2,7 @@
 //Mandatory assignment
 //Course 02158 Concurrent Programming, DTU, Fall 2015
 
-//Hans Henrik Løvengreen    Oct 6,  2015
+//Hans Henrik Loevengreen    Oct 6,  2015
 
 
 import java.awt.Color;
@@ -110,6 +110,20 @@ class Car extends Thread {
     boolean atGate(Pos pos) {
         return pos.equals(startpos);
     }
+    
+    boolean entering(Pos pos) {
+    	if (pos.equals(new Pos(0,1)) || pos.equals(new Pos(28,1))) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    boolean leaving(Pos pos) {
+    	if (pos.equals(new Pos(1,1)) || pos.equals(new Pos(29,1))) {
+    		return true;
+    	}
+    	return false;
+    }
 
    public void run() {
         try {
@@ -125,9 +139,17 @@ class Car extends Thread {
                     mygate.pass(); 
                     speed = chooseSpeed();
                 }
-                	
-                newpos = nextPos(curpos);
                 
+                if (entering(curpos)) {
+                	enter(no);
+                }
+                
+               if (leaving(curpos)) {
+            	   leave(no);
+               }
+               
+               newpos = nextPos(curpos);
+               
                 //  Move to new position 
                 cd.clear(curpos);
                 cd.mark(curpos,newpos,col,no);
