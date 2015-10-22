@@ -52,6 +52,8 @@ class Car extends Thread {
     int speed;                       // Current car speed
     Pos curpos;                      // Current position 
     Pos newpos;                      // New position to go to
+    
+    Alley alley = new Alley();
 
     public Car(int no, CarDisplayI cd, Gate g) {
 
@@ -112,14 +114,14 @@ class Car extends Thread {
     }
     
     boolean entering(Pos pos) {
-    	if (pos.equals(new Pos(0,1)) || pos.equals(new Pos(28,1))) {
+    	if (pos.equals(new Pos(0,1)) || pos.equals(new Pos(8,1)) || pos.equals(new Pos(9,3))) {
     		return true;
     	}
     	return false;
     }
     
     boolean leaving(Pos pos) {
-    	if (pos.equals(new Pos(1,1)) || pos.equals(new Pos(29,1))) {
+    	if (pos.equals(new Pos(1,1)) || pos.equals(new Pos(9,0))) {
     		return true;
     	}
     	return false;
@@ -134,6 +136,8 @@ class Car extends Thread {
 
             while (true) { 
                 sleep(speed());
+                
+                cd.println(curpos.toString());
 
                 if (atGate(curpos)) { 
                     mygate.pass(); 
@@ -141,11 +145,11 @@ class Car extends Thread {
                 }
                 
                 if (entering(curpos)) {
-                	enter(no);
+                	alley.enter(no);
                 }
                 
                if (leaving(curpos)) {
-            	   leave(no);
+            	   alley.leave(no);
                }
                
                newpos = nextPos(curpos);

@@ -1,11 +1,12 @@
 
 class Alley {
 	
-	private Semaphore up, down = new Semaphore(1);
-	private boolean passing;
-	private int inAlley = 0;
+	private static Semaphore up = new Semaphore(1); 
+	private static Semaphore down = new Semaphore(1);
+	private static boolean passing;
+	public static int inAlley = 0;
 	
-	public void enter(int no) throws InterruptedException {
+	public synchronized void enter(int no) throws InterruptedException {
 			switch(no) {
 			case 1:
 			case 2:
@@ -18,7 +19,11 @@ class Alley {
 				}
 				inAlley++;
 				up.V();
-			default:
+				break;
+			case 5:
+			case 6:
+			case 7:
+			case 8:
 				down.P();
 				if (!passing) {
 					passing = true;
@@ -26,10 +31,12 @@ class Alley {
 				}
 				inAlley++;
 				down.V();
+				break;
+			default:
 			}
 	}
 	
-	public void leave(int no) {
+	public synchronized void leave(int no) {
 			switch(no) {
 			case 1:
 			case 2:
@@ -39,11 +46,18 @@ class Alley {
 					passing = false;
 					down.V();
 				}
-			default:
+				break;
+			case 5:
+			case 6:
+			case 7:
+			case 8:
 				if (--inAlley == 0) {
 					passing = false;
 					up.V();
+					System.out.println(up.toString());
 				}
+				break;
+				default:
 			}
 	}
 
