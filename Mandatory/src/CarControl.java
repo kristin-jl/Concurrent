@@ -121,7 +121,7 @@ class Car extends Thread {
     }
     
     boolean leaving(Pos pos) {
-    	if (pos.equals(new Pos(1,1)) || pos.equals(new Pos(9,0))) {
+    	if (pos.equals(new Pos(1,1)) || pos.equals(new Pos(10,2))) {
     		return true;
     	}
     	return false;
