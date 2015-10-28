@@ -6,7 +6,7 @@ class Alley {
 	private static boolean passing;
 	public static int inAlley = 0;
 	
-	public synchronized void enter(int no) throws InterruptedException {
+	public void enter(int no) throws InterruptedException {
 			switch(no) {
 			case 1:
 			case 2:
@@ -36,7 +36,7 @@ class Alley {
 			}
 	}
 	
-	public synchronized void leave(int no) {
+	public void leave(int no) {
 			switch(no) {
 			case 1:
 			case 2:
@@ -54,7 +54,6 @@ class Alley {
 				if (--inAlley == 0) {
 					passing = false;
 					up.V();
-					System.out.println(up.toString());
 				}
 				break;
 				default:

@@ -53,7 +53,18 @@ class Car extends Thread {
     Pos curpos;                      // Current position 
     Pos newpos;                      // New position to go to
     
-    Alley alley = new Alley();
+    private static Alley alley = new Alley();
+    
+    // Semaphore representation of the map
+    private static Semaphore[][] map = new Semaphore[11][12];
+    
+    static {
+    	for (int i = 0; i < 11; i++) {
+    		for (int j = 0; j < 12; j++) {
+    			map[i][j] = new Semaphore(1);
+    		}
+    	}
+    }
 
     public Car(int no, CarDisplayI cd, Gate g) {
 
@@ -113,6 +124,7 @@ class Car extends Thread {
         return pos.equals(startpos);
     }
     
+    // called before the car enters the alley
     boolean entering(Pos pos) {
     	if (pos.equals(new Pos(0,1)) || pos.equals(new Pos(8,1)) || pos.equals(new Pos(9,3))) {
     		return true;
@@ -120,6 +132,7 @@ class Car extends Thread {
     	return false;
     }
     
+    // called when the car leaves the alley
     boolean leaving(Pos pos) {
     	if (pos.equals(new Pos(1,1)) || pos.equals(new Pos(10,2))) {
     		return true;
@@ -137,7 +150,7 @@ class Car extends Thread {
             while (true) { 
                 sleep(speed());
                 
-                cd.println(curpos.toString());
+                //cd.println(curpos.toString());
 
                 if (atGate(curpos)) { 
                     mygate.pass(); 
@@ -154,12 +167,20 @@ class Car extends Thread {
                
                newpos = nextPos(curpos);
                
+               // check that there is not a another car on the next position
+               if (no != 0)
+            	   map[newpos.row][newpos.col].P();
+               
                 //  Move to new position 
                 cd.clear(curpos);
                 cd.mark(curpos,newpos,col,no);
                 sleep(speed());
                 cd.clear(curpos,newpos);
                 cd.mark(newpos,col,no);
+                
+                // leave the current position
+                if (no != 0)
+                	map[curpos.row][curpos.col].V();
 
                 curpos = newpos;
             }
