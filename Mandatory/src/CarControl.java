@@ -144,8 +144,7 @@ class Car extends Thread {
     
    void passBarrier() throws InterruptedException {
 	   if ((no < 5 && no > 0 && curpos.equals(new Pos(startpos.row + 1, startpos.col))) ||
-			   (no == 0 && curpos.equals(new Pos(startpos.row, startpos.col + 1))) ||
-			   (no >= 5 && no > 0 && curpos.equals(new Pos(startpos.row - 1, startpos.col)))) {
+			   (no >= 5 && curpos.equals(new Pos(startpos.row - 1, startpos.col)))) {
 		   barrier.sync();
 	   } 
    }
