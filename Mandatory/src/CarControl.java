@@ -65,6 +65,8 @@ class Car extends Thread {
     		}
     	}
     }
+    
+    private static Barrier barrier = new Barrier();
 
     public Car(int no, CarDisplayI cd, Gate g) {
 
@@ -139,6 +141,14 @@ class Car extends Thread {
     	}
     	return false;
     }
+    
+   void passBarrier() throws InterruptedException {
+	   if ((no < 5 && no > 0 && curpos.equals(new Pos(startpos.row + 1, startpos.col))) ||
+			   (no == 0 && curpos.equals(new Pos(startpos.row, startpos.col + 1))) ||
+			   (no >= 5 && no > 0 && curpos.equals(new Pos(startpos.row - 1, startpos.col)))) {
+		   barrier.sync();
+	   } 
+   }
 
    public void run() {
         try {
@@ -183,6 +193,8 @@ class Car extends Thread {
                 	map[curpos.row][curpos.col].V();
 
                 curpos = newpos;
+                
+                passBarrier();
             }
 
         } catch (Exception e) {
@@ -199,6 +211,7 @@ public class CarControl implements CarControlI{
     CarDisplayI cd;           // Reference to GUI
     Car[]  car;               // Cars
     Gate[] gate;              // Gates
+    private Barrier barrier = new Barrier();
 
     public CarControl(CarDisplayI cd) {
         this.cd = cd;
@@ -221,11 +234,13 @@ public class CarControl implements CarControlI{
     }
 
     public void barrierOn() { 
-        cd.println("Barrier On not implemented in this version");
+        //cd.println("Barrier On not implemented in this version");
+    	this.barrier.on();
     }
 
     public void barrierOff() { 
-        cd.println("Barrier Off not implemented in this version");
+        //cd.println("Barrier Off not implemented in this version");
+    	this.barrier.off();
     }
 
     public void barrierShutDown() { 
