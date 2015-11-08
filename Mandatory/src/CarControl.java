@@ -47,7 +47,8 @@ class Car extends Thread {
     Pos curpos;                      // Current position 
     Pos newpos;                      // New position to go to
     
-    private static Alley alley = new Alley();
+    //private static Alley alley = new Alley();
+    private static AlleyMonitor alleyMonitor = new AlleyMonitor();
     
     // Semaphore representation of the map
     private static Semaphore[][] map = new Semaphore[11][12];
@@ -60,7 +61,8 @@ class Car extends Thread {
     	}
     }
     
-    private static Barrier barrier = new Barrier();
+    //private static Barrier barrier = new Barrier();
+    private static BarrierMonitor barrier = new BarrierMonitor();
 
     public Car(int no, CarDisplayI cd, Gate g) {
 
@@ -137,9 +139,9 @@ class Car extends Thread {
     }
     
    void passBarrier() throws InterruptedException {
-	   if (barrier.isActive() && ((no < 5 && no > 0 && curpos.equals(new Pos(startpos.row + 1, startpos.col))) ||
+	   if ((no < 5 && no > 0 && curpos.equals(new Pos(startpos.row + 1, startpos.col))) ||
 			   (no >= 5 && curpos.equals(new Pos(startpos.row - 1, startpos.col))) || 
-			   (no == 0 && curpos.equals(new Pos(startpos.row, startpos.col + 1))))) {
+			   (no == 0 && curpos.equals(new Pos(startpos.row, startpos.col + 1)))) {
 		   barrier.sync();
 	   } 
    }
@@ -162,7 +164,7 @@ class Car extends Thread {
                 }
                 
                 if (entering(curpos)) {
-                	if (no < 4) {
+                	if (no < 5) {
                 		alleyMonitor.enterUp();
                 	}
                 	else {
@@ -171,7 +173,7 @@ class Car extends Thread {
                 }
                 
                if (leaving(curpos)) {
-            	   if (no < 4) {
+            	   if (no < 5) {
             		   alleyMonitor.leaveUp();
             	   }
             	   else {
@@ -215,7 +217,8 @@ public class CarControl implements CarControlI{
     CarDisplayI cd;           // Reference to GUI
     Car[]  car;               // Cars
     Gate[] gate;              // Gates
-    private Barrier barrier = new Barrier();
+    //private Barrier barrier = new Barrier();
+    private BarrierMonitor barrier = new BarrierMonitor();
 
     public CarControl(CarDisplayI cd) {
         this.cd = cd;
@@ -232,21 +235,13 @@ public class CarControl implements CarControlI{
    public void startCar(int no) {
         gate[no].open();
         if (no == 0)
-			try {
-				barrier.barrierCar0();
-			} catch (InterruptedException e) {
-				
-			}
+			barrier.barrierCar0();
     }
 
     public void stopCar(int no) {
         gate[no].close();
-        if (no == 0) 
-        	try {
-        		barrier.barrierCar0();
-        	} catch (InterruptedException e) {
-        		
-        	}
+        if (no == 0)
+			barrier.barrierCar0();
         	
     }
 
