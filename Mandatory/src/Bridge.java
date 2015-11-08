@@ -27,4 +27,12 @@ class Bridge {
 		bridge = new Semaphore(limit - 1); 
 		mutex.V();
 	}
+	
+	public void on() {
+		active = true;
+	}
+	
+	public void off() {
+		active = false;
+	}
 }
