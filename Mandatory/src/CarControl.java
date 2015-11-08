@@ -127,7 +127,7 @@ class Car extends Thread {
     
     // called before the car enters the alley
     boolean entering(Pos pos) {
-    	if (pos.equals(new Pos(0,1)) || pos.equals(new Pos(8,1)) || pos.equals(new Pos(9,3))) {
+    	if (pos.equals(new Pos(0,0)) || pos.equals(new Pos(8,1)) || pos.equals(new Pos(9,3))) {
     		return true;
     	}
     	return false;
@@ -149,15 +149,15 @@ class Car extends Thread {
 	   } 
    }
    
-   boolean enterBrigde(Pos pos, int no) {
-	  if ((no < 5 && pos.col == 1 || no >= 5 && pos.col == 3)  && pos.row >= 9 && pos.row <= 2) {
+   boolean enterBridge(Pos pos, int no) {
+	  if ((no < 5 && pos.col == 0 && pos.row == 1) || (no >= 5 && pos.col == 4 && pos.row == 0)) {
 		  return true;
 	  }
 	  return false;
    }
    
-   boolean leaveBrigde(Pos pos, int no) {
-	  if ((no < 5 && pos.col == 3 || no >= 5 && pos.col == 1)  && pos.row >= 9 && pos.row <= 2) {
+   boolean leaveBridge(Pos pos, int no) {
+	  if ((no < 5 && pos.col == 3 && pos.row == 1) || (no >= 5 && pos.col == 1 && pos.row == 0)) {
 		  return true;
 	  }
 	  return false;
@@ -199,14 +199,6 @@ class Car extends Thread {
             	   }
                }
                
-               if (enterBridge(curpos, no)) {
-            	   bridge.enter();
-               }
-               
-               if(leaveBridge(curpos,no)) {
-            	   bridge.leave();
-               }
-               
                
                newpos = nextPos(curpos);
                
@@ -228,6 +220,14 @@ class Car extends Thread {
                 curpos = newpos;
                 
                 passBarrier();
+                
+                if (enterBridge(curpos, no)) {
+             	   bridge.enter();
+                }
+                
+                if(leaveBridge(curpos,no)) {
+             	   bridge.leave();
+                }
             }
 
         } catch (Exception e) {
@@ -246,6 +246,7 @@ public class CarControl implements CarControlI{
     Gate[] gate;              // Gates
     //private Barrier barrier = new Barrier();
     private BarrierMonitor barrier = new BarrierMonitor();
+    private Bridge bridge = new Bridge();
 
     public CarControl(CarDisplayI cd) {
         this.cd = cd;
@@ -295,6 +296,10 @@ public class CarControl implements CarControlI{
 
     public void setLimit(int k) { 
 //        cd.println("Setting of bridge limit not implemented in this version");
+    	try {
+			bridge.setLimit(k);
+		} catch (InterruptedException e) {}
+    	
     }
 
     public void removeCar(int no) { 

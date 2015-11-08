@@ -57,4 +57,8 @@ class BarrierMonitor {
 			car0Active = false;
 		}
 	}
+	
+	public synchronized void shutdown() {
+		
+	}
 }
