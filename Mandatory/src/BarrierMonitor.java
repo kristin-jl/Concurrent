@@ -22,32 +22,31 @@ class BarrierMonitor {
 				} catch (InterruptedException e) {}
 			}
 			
-			if (!active) {
-				return;
+			if (active) {
+				count--;
+				if (count == 0) {
+					OK = false;
+					notifyAll();
+				}
+				
+				if (!car0Active && n == 9) {
+					n = 8;
+				}
 			}
 			
-			count--;
-			if (count == 0) {
-				OK = false;
-				notifyAll();
-			}
-			
-			if (!car0Active && n == 9) {
-				n = 8;
-			}
 		}
 	}
 	
 	public synchronized void on() {
 		active = true;
 		count = 0;
+		OK = false;
 	}
 	
 	public synchronized void off() {
 		active = false;
 		OK = true;
 		notifyAll();
-		OK = false;
 	}
 	
 	public synchronized void barrierCar0() {
