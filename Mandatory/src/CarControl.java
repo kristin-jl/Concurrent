@@ -49,9 +49,11 @@ class Car extends Thread {
     
     //private static Alley alley = new Alley();
     private static AlleyMonitor alleyMonitor = new AlleyMonitor();
+    private static Bridge bridge = new Bridge();
     
     // Semaphore representation of the map
     private static Semaphore[][] map = new Semaphore[11][12];
+    
     
     static {
     	for (int i = 0; i < 11; i++) {
@@ -145,6 +147,21 @@ class Car extends Thread {
 		   barrier.sync();
 	   } 
    }
+   
+   boolean enterBrigde(Pos pos, int no) {
+	  if ((no < 5 && pos.col == 1 || no >= 5 && pos.col == 3)  && pos.row >= 9 && pos.row <= 2) {
+		  return true;
+	  }
+	  return false;
+   }
+   
+   boolean leaveBrigde(Pos pos, int no) {
+	  if ((no < 5 && pos.col == 3 || no >= 5 && pos.col == 1)  && pos.row >= 9 && pos.row <= 2) {
+		  return true;
+	  }
+	  return false;
+   }
+
 
    public void run() {
         try {
@@ -180,6 +197,15 @@ class Car extends Thread {
             		   alleyMonitor.leaveDown();
             	   }
                }
+               
+               if (enterBridge(curpos, no)) {
+            	   bridge.enter();
+               }
+               
+               if(leaveBridge(curpos,no)) {
+            	   bridge.leave();
+               }
+               
                
                newpos = nextPos(curpos);
                

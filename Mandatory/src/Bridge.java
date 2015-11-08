@@ -1,29 +1,23 @@
 class Bridge {
 	private static int limit = 6; // Default value
-	private static int onBridge;
+	private static int onBridge = 0;
 	public static Semaphore bridge = new Semaphore(limit); 
 	public static Semaphore mutex = new Semaphore(0);
 	
-	public void enter(int no) {
-		try {
-			mutex.P();
-		} catch (InterruptedException e1) {}
+	// pos.col >= 1 && pos.col <= 3 && pos.row >= 9 && pos.row <= 2
+	
+	
+	public void enter() throws InterruptedException{
+		mutex.P();
 		if (onBridge < limit) {
-			try {
-				bridge.P();
-			} catch (InterruptedException e) {}
+			bridge.P();
 			onBridge++ ;
-		}
-		else {
-			bridge.V();
 		}
 		mutex.V();
 	}
 	
-	public void leave(int no) {
-		try {
-			mutex.P();
-		} catch (InterruptedException e) {}
+	public void leave() throws InterruptedException {
+		mutex.P();
 		onBridge--;
 		mutex.V();
 	}
