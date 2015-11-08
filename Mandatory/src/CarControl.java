@@ -143,8 +143,9 @@ class Car extends Thread {
     }
     
    void passBarrier() throws InterruptedException {
-	   if ((no < 5 && no > 0 && curpos.equals(new Pos(startpos.row + 1, startpos.col))) ||
-			   (no >= 5 && curpos.equals(new Pos(startpos.row - 1, startpos.col)))) {
+	   if (barrier.isActive() && ((no < 5 && no > 0 && curpos.equals(new Pos(startpos.row + 1, startpos.col))) ||
+			   (no >= 5 && curpos.equals(new Pos(startpos.row - 1, startpos.col))) || 
+			   (no == 0 && curpos.equals(new Pos(startpos.row, startpos.col + 1))))) {
 		   barrier.sync();
 	   } 
    }
@@ -226,10 +227,23 @@ public class CarControl implements CarControlI{
 
    public void startCar(int no) {
         gate[no].open();
+        if (no == 0)
+			try {
+				barrier.barrierCar0();
+			} catch (InterruptedException e) {
+				
+			}
     }
 
     public void stopCar(int no) {
         gate[no].close();
+        if (no == 0) 
+        	try {
+        		barrier.barrierCar0();
+        	} catch (InterruptedException e) {
+        		
+        	}
+        	
     }
 
     public void barrierOn() { 
