@@ -265,7 +265,7 @@ public class CarControl implements CarControlI{
     }
 
     public void setLimit(int k) { 
-        cd.println("Setting of bridge limit not implemented in this version");
+//        cd.println("Setting of bridge limit not implemented in this version");
     }
 
     public void removeCar(int no) { 
