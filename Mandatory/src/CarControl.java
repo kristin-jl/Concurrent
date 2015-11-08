@@ -1,9 +1,3 @@
-//Prototype implementation of Car Control
-//Mandatory assignment
-//Course 02158 Concurrent Programming, DTU, Fall 2015
-
-//Hans Henrik Loevengreen    Oct 6,  2015
-
 
 import java.awt.Color;
 
@@ -167,11 +161,21 @@ class Car extends Thread {
                 }
                 
                 if (entering(curpos)) {
-                	alley.enter(no);
+                	if (no < 4) {
+                		alleyMonitor.enterUp();
+                	}
+                	else {
+                		alleyMonitor.enterDown();
+                	}
                 }
                 
                if (leaving(curpos)) {
-            	   alley.leave(no);
+            	   if (no < 4) {
+            		   alleyMonitor.leaveUp();
+            	   }
+            	   else {
+            		   alleyMonitor.leaveDown();
+            	   }
                }
                
                newpos = nextPos(curpos);

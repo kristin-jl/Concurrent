@@ -30,7 +30,7 @@ class Alley {
 					up.P();
 				}
 				inAlley++;
-				down.V();
+				down.V();	
 				break;
 			default:
 			}
