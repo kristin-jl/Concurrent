@@ -64,13 +64,14 @@ class Car extends Thread {
     }
     
     //private static Barrier barrier = new Barrier();
-    private static BarrierMonitor barrier = new BarrierMonitor();
+    private BarrierMonitor barrier;
 
-    public Car(int no, CarDisplayI cd, Gate g) {
+    public Car(int no, CarDisplayI cd, Gate g, BarrierMonitor barrier) {
 
         this.no = no;
         this.cd = cd;
         mygate = g;
+        this.barrier = barrier;
         startpos = cd.getStartPos(no);
         barpos = cd.getBarrierPos(no);  // For later use
 
@@ -253,7 +254,9 @@ public class CarControl implements CarControlI{
 
         for (int no = 0; no < 9; no++) {
             gate[no] = new Gate();
-            car[no] = new Car(no,cd,gate[no]);
+            // the barrier has to be parsed to the cars
+            // so they have the same object for on/off
+            car[no] = new Car(no,cd,gate[no], barrier);
             car[no].start();
         } 
     }
