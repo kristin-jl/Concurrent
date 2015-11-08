@@ -2,7 +2,7 @@
 //Mandatory assignment
 //Course 02158 Concurrent Programming, DTU, Fall 2015
 
-//Hans Henrik Løvengreen    Oct 6,  2015
+//Hans Henrik L��vengreen    Oct 6,  2015
 
 interface CarControlI {
 
@@ -35,6 +35,11 @@ interface CarControlI {
     public void setVariation(int no,int var); // Set speed variation (percentage) 
                                               // of car no. (for testing)
 
+    public void bridgeOn();  // TODO - made ourself
+    
+    public void bridgeOff(); // TODO - made ourself
+    
+    
     /*
      *  The barrierShutDown() method may be called concurrently with the other methods 
      *  except for barrierOn() and barrierOff(), and the method itself.

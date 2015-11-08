@@ -150,14 +150,14 @@ class Car extends Thread {
    }
    
    boolean enterBridge(Pos pos, int no) {
-	  if ((no < 5 && pos.col == 0 && pos.row == 1) || (no >= 5 && pos.col == 4 && pos.row == 0)) {
+	  if (bridge.isActive() && ((no < 5 && pos.col == 0 && pos.row == 1) || (no >= 5 && pos.col == 4 && pos.row == 0))) {
 		  return true;
 	  }
 	  return false;
    }
    
    boolean leaveBridge(Pos pos, int no) {
-	  if ((no < 5 && pos.col == 3 && pos.row == 1) || (no >= 5 && pos.col == 1 && pos.row == 0)) {
+	  if (bridge.isActive() && ((no < 5 && pos.col == 3 && pos.row == 1) || (no >= 5 && pos.col == 1 && pos.row == 0))) {
 		  return true;
 	  }
 	  return false;
@@ -292,6 +292,14 @@ public class CarControl implements CarControlI{
         try { Thread.sleep(3000); } catch (InterruptedException e) { }
         // Recommendation: 
         //   If not implemented call barrier.off() instead to make graphics consistent
+    }
+    
+    public void bridgeOn() {
+    	this.bridge.on();
+    }
+    
+    public void bridgeOff() {
+    	this.bridge.off();
     }
 
     public void setLimit(int k) { 
