@@ -1,57 +1,46 @@
 
 class Barrier {
 	
-	private static boolean on;
-	private static Semaphore mutex = new Semaphore(1), protect = new Semaphore(1);
-	private static int atBar;
-	private static int count;
+	private static boolean active;
+	private static int count, n = 8;
+	private static Semaphore turnstile = new Semaphore(0), turnstile2 = new Semaphore(1);
+	private static Semaphore mutex = new Semaphore(1);
 	
+	// solution is from The Little Book of Semaphores pages 39-41
 	public void sync() throws InterruptedException {
-		protect.P();
-		if (on) {
-			if (atBar == 7) {
-				atBar--;
-				off();
-				if (atBar == 0) {
-					on();
-			} else {
-				atBar++;
-			}
-		}
-		protect.V();
-//		atBar++;
-//		
-//		if (atBar == 8 && on){
-//			off();
-//			% dec
-//		}
-//		if (atBar == 0 && !on) {
-//			on();
-//		}
-//		protect.V();
-	}
-		
-			mutex.P();
-			if (on && atBAr==8) {
-				if (atBar == 8) {
-					atBar = 0;
-					release();
-					mutex.V();
-					return;
+			if (active) {
+				mutex.P();
+				count++;
+				if (count == n) {
+					turnstile2.P();
+					turnstile.V();
 				}
 				mutex.V();
-				bar.P();
+				
+				turnstile.P();
+				turnstile.V();
+				
+				mutex.P();
+				count--;
+				if (count == 0) {
+					turnstile.P();
+					turnstile2.V();
+				}
+				mutex.V();
+				
+				turnstile2.P();
+				turnstile2.V();
 			}
 		}
 		
 	
 	
 	public void on() {
-		on = true;
+		active = true;
 	}
 	
 	public void off() {
-		on = false;
+		active = false;
 	}
 	
 }
