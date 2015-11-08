@@ -1,11 +1,3 @@
-// Copy into CarContol, line 163
-
-
-               
-               
- // Code from here
-
-
 class AlleyMonitor {
 	private int up, down;
 	
