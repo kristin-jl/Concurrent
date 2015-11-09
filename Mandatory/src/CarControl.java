@@ -140,7 +140,8 @@ class Car extends Thread {
     	}
     	return false;
     }
-    
+   
+    // called when a car is about to pass the barrier
    void passBarrier() throws InterruptedException {
 	   if ((no < 5 && no > 0 && curpos.equals(new Pos(startpos.row + 1, startpos.col))) ||
 			   (no >= 5 && curpos.equals(new Pos(startpos.row - 1, startpos.col))) || 
@@ -149,6 +150,7 @@ class Car extends Thread {
 	   } 
    }
    
+   // called when a car gets on the bridge
    boolean enterBridge(Pos pos, int no) {
 	  if (bridge.isActive() && ((no < 5 && pos.col == 0 && pos.row == 1) || (no >= 5 && pos.col == 4 && pos.row == 0))) {
 		  return true;
@@ -156,11 +158,16 @@ class Car extends Thread {
 	  return false;
    }
    
+   // called when a car leaves the bridge
    boolean leaveBridge(Pos pos, int no) {
 	  if (bridge.isActive() && ((no < 5 && pos.col == 3 && pos.row == 1) || (no >= 5 && pos.col == 1 && pos.row == 0))) {
 		  return true;
 	  }
 	  return false;
+   }
+   
+   void removeCar() {
+	   
    }
 
 
