@@ -30,9 +30,13 @@ class Bridge {
 	
 	public void on() {
 		active = true;
+		bridge = new Semaphore(limit - 1);
+		mutex = new Semaphore(1);
 	}
 	
 	public void off() {
 		active = false;
+		bridge = new Semaphore(limit - 1);
+		mutex = new Semaphore(1);
 	}
 }

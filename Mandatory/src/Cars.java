@@ -1021,7 +1021,13 @@ public class Cars extends JFrame implements CarDisplayI {
 
     void showBridge(boolean active) {
         gnd.showBridge(active);
-        if (active) cp.enableBridge(); else cp.disableBridge();
+        if (active) {
+        	cp.enableBridge(); 
+        	ctr.bridgeOn();
+        } else {
+        	cp.disableBridge();
+        	ctr.bridgeOff();
+        }
      }
     
     void startFieldClick(int no) {
