@@ -1,18 +1,16 @@
 class AlleyMonitor {
-	private static int up, down, activeUp, activeDown, enterUp, enterDown;
+	private int up, down, activeUp, activeDown, enteredUp, enteredDown;
 	
 	public synchronized void enterUp() throws InterruptedException {
 		while(down > 0) {
 			wait();
 		}
-		if (activeUp > enterUp && down == 0) {
-			enterUp++;
-			notifyAll();
+		if (activeUp > enteredUp && down == 0) {
+			enteredUp++;
 			
 		} else {
-			enterUp = 0;
-			notifyAll();
-			while(enterDown <= 4 && enterDown >= 0) {
+			enteredUp = 0;
+			while(enteredDown <= 4 && enteredDown > 0) {
 				wait();
 			}
 		}
@@ -23,13 +21,11 @@ class AlleyMonitor {
 		while(up > 0) {
 			wait();
 		}
-		if (activeDown > enterDown && up == 0) {
-			enterDown++;
-			notifyAll();
+		if (activeDown > enteredDown && up == 0) {
+			enteredDown++;
 		} else {
-			enterDown = 0;
-			notifyAll();
-			while (enterUp <= 4 && enterUp >= 0) {
+			enteredDown = 0;
+			while (enteredUp <= 4 && enteredUp > 0) {
 				wait();
 			}
 		}
