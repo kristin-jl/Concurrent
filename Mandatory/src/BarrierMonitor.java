@@ -1,7 +1,7 @@
 // implementation based on solution from Synchronization Mechanisms page 9
 class BarrierMonitor {
-	private static int count, n = 8;
-	private static boolean OK, active, car0Active;
+	private int count, n = 8;
+	private boolean OK, active, car0Active;
 	
 	public synchronized void sync() {
 		if (active) {

@@ -59,7 +59,7 @@ class Car extends Thread {
     static Semaphore halt2 = new Semaphore(1);
     
     //private static Alley alley = new Alley();
-    private static AlleyMonitor alleyMonitor = new AlleyMonitor();
+    private AlleyMonitor alleyMonitor = new AlleyMonitor();
     private static Bridge bridge = new Bridge();
     
     // Semaphore representation of the map
@@ -207,6 +207,10 @@ class Car extends Thread {
 		   removed = false;
        }
    }
+   
+   void setAlley(AlleyMonitor alley) {
+	   this.alleyMonitor = alley;
+   }
 
 
    public void run() {
@@ -228,36 +232,37 @@ class Car extends Thread {
                 
                 if (entering(curpos)) {
                 	if (no < 5) {
-                		if (activeUp -1> enterUp){ 
-                			halt2.P();
-                			halt2.V();
-                			enterUp++;
-                			cd.println("EU "+enterUp);
-                		}
-                		else {
-                			enterUp = 0;
-                			cd.println("LU " + enterUp + " release U");
-                			halt1.V();
-                			halt2.P();
-                		}
+//                		if (activeUp -1> enterUp){ 
+//                			halt2.P();
+//                			halt2.V();
+//                			enterUp++;
+//                			cd.println("EU "+enterUp);
+//                		}
+//                		else {
+//                			enterUp = 0;
+//                			cd.println("LU " + enterUp + " release U");
+//                			halt1.V();
+//                			halt2.P();
+//                		}
                 		alleyMonitor.enterUp();
                 	}
                 	if (no >= 5) {
-                		if (activeDown -1 > enterDown){
-                			halt1.P();
-                			halt1.V();
-                			enterDown++;
-                			cd.println("ED " + enterDown);
-                		}
-                		else {
-                			enterDown = 0;
-                			cd.println("LD " + enterDown + " release D");
-                			halt2.V();
-                			halt1.P();
-                		}
+//                		if (activeDown -1 > enterDown){
+//                			halt1.P();
+//                			halt1.V();
+//                			enterDown++;
+//                			cd.println("ED " + enterDown);
+//                		}
+//                		else {
+//                			enterDown = 0;
+//                			cd.println("LD " + enterDown + " release D");
+//                			halt2.V();
+//                			halt1.P();
+//                		}
                 		alleyMonitor.enterDown();
-                		inAlley = true;
+                		
                 	}
+                	inAlley = true;
                 }
                 
                if (leaving(curpos)) {
@@ -322,6 +327,7 @@ public class CarControl implements CarControlI{
     Gate[] gate;              // Gates
     //private Barrier barrier = new Barrier();
     private BarrierMonitor barrier = new BarrierMonitor();
+    private AlleyMonitor alley = new AlleyMonitor();
     private Bridge bridge = new Bridge();
     
 
@@ -335,6 +341,7 @@ public class CarControl implements CarControlI{
             // the barrier has to be parsed to the cars
             // so they have the same object for on/off
             car[no] = new Car(no,cd,gate[no], barrier);
+            car[no].setAlley(alley);
             car[no].start();
         } 
     }
@@ -345,10 +352,10 @@ public class CarControl implements CarControlI{
 			barrier.barrierCar0();
         }
         else if (no <5 ) {
-        	Car.activeUp++;
+        	alley.activeInc("up");
         }
         else {
-        	Car.activeDown++;
+        	alley.activeInc("down");
         }
     }
 
