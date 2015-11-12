@@ -232,33 +232,9 @@ class Car extends Thread {
                 
                 if (entering(curpos)) {
                 	if (no < 5) {
-//                		if (activeUp -1> enterUp){ 
-//                			halt2.P();
-//                			halt2.V();
-//                			enterUp++;
-//                			cd.println("EU "+enterUp);
-//                		}
-//                		else {
-//                			enterUp = 0;
-//                			cd.println("LU " + enterUp + " release U");
-//                			halt1.V();
-//                			halt2.P();
-//                		}
                 		alleyMonitor.enterUp();
                 	}
                 	if (no >= 5) {
-//                		if (activeDown -1 > enterDown){
-//                			halt1.P();
-//                			halt1.V();
-//                			enterDown++;
-//                			cd.println("ED " + enterDown);
-//                		}
-//                		else {
-//                			enterDown = 0;
-//                			cd.println("LD " + enterDown + " release D");
-//                			halt2.V();
-//                			halt1.P();
-//                		}
                 		alleyMonitor.enterDown();
                 		
                 	}
@@ -309,6 +285,16 @@ class Car extends Thread {
                 if(leaveBridge(curpos,no)) {
              	   bridge.leave();
                 }
+                
+                // Count active cars 1-4
+                if (no < 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col|| 
+                		no >= 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col) {
+                	alleyMonitor.activeInc(no < 5 ? "up" : "down");
+                }
+                if (no < 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col|| 
+                		no >= 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col) {
+                	alleyMonitor.activeDec(no < 5 ? "up" : "down");
+                }
             }
 
         } catch (Exception e) {
@@ -351,24 +337,12 @@ public class CarControl implements CarControlI{
         if (no == 0) {
 			barrier.barrierCar0();
         }
-        else if (no <5 ) {
-        	alley.activeInc("up");
-        }
-        else {
-        	alley.activeInc("down");
-        }
     }
 
     public void stopCar(int no) {
         gate[no].close();
         if (no == 0){
 			barrier.barrierCar0();
-        }
-        else if (no <5 ) {
-        	Car.activeUp--;
-        }
-        else {
-        	Car.activeDown--;
         }   	
     }
 

@@ -3,7 +3,7 @@ class AlleyMonitor {
 	private boolean locked;
 	
 	public synchronized void enterUp() throws InterruptedException {
-		while(down > 0) {
+		while(down > 0 || locked) {
 			wait();
 		}
 		if (activeUp > enteredUp) {
@@ -13,10 +13,7 @@ class AlleyMonitor {
 			enteredUp++;
 			notifyAll();
 		} else {
-			enteredUp = 0;
-			locked = true;
-			notifyAll();
-			while(enteredDown > 0 && locked) {
+			while(down > 0 && locked) {
 				wait();
 			}
 			enteredUp++;
@@ -25,17 +22,14 @@ class AlleyMonitor {
 	}
 	
 	public synchronized void enterDown() throws InterruptedException {
-		while(up > 0) {
+		while(up > 0 || !locked) {
 			wait();
 		}
 		if (activeDown > enteredDown) {
 			enteredDown++;
 			notifyAll();
 		} else {
-			enteredDown = 0;
-			locked = false;
-			notifyAll();
-			while (enteredUp > 0) {
+			while (up > 0 && !locked) {
 				wait();
 			}
 			enteredDown++;
@@ -45,11 +39,19 @@ class AlleyMonitor {
 	
 	public synchronized void leaveUp() {
 		up--;
+		if (enteredUp >= activeUp && activeDown != 0 ) {
+			enteredUp = 0;
+			locked = true;
+		}
 		notifyAll();
 	}
 	
 	public synchronized void leaveDown() {
 		down--;
+		if (enteredDown >= activeDown && activeUp != 0) {
+			enteredDown = 0;
+			locked = false;
+		}
 		notifyAll();
 	}
 	
@@ -64,6 +66,7 @@ class AlleyMonitor {
 		default:
 			break;
 		}
+		notifyAll();
 	}
 	
 	public synchronized void activeDec(String direction) {
@@ -77,6 +80,7 @@ class AlleyMonitor {
 		default:
 			break;	
 		}
+		notifyAll();
 	}
 }
 
