@@ -58,7 +58,18 @@ class BarrierMonitor {
 		}
 	}
 	
-	public synchronized void shutdown() {
-		
+	public synchronized void shutdown() throws InterruptedException {
+		if (!active) {
+			return;
+		} else {
+			if (count == 0) {
+				off();
+			} else {
+				while(count > 0) {
+					wait();
+				}
+				off();
+			}
+		}
 	}
 }
