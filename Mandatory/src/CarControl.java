@@ -289,11 +289,11 @@ class Car extends Thread {
                 }
                 
                 // Count active cars 1-4
-                if (no < 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col|| 
+                if (no != 0 && no < 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col|| 
                 		no >= 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col) {
                 	alleyMonitor.activeInc(no < 5 ? "up" : "down");
                 }
-                if (no < 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col|| 
+                if (no != 0 && no < 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col|| 
                 		no >= 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col) {
                 	alleyMonitor.activeDec(no < 5 ? "up" : "down");
                 }
