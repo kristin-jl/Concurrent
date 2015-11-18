@@ -3,7 +3,7 @@ class AlleyMonitor {
 	private boolean locked;
 	
 	public synchronized void enterUp() throws InterruptedException {
-		while(down > 0 || locked) {
+		while(down > 0 || locked && activeDown > 0) {
 			wait();
 		}
 		if (activeUp > enteredUp) {
@@ -22,7 +22,7 @@ class AlleyMonitor {
 	}
 	
 	public synchronized void enterDown() throws InterruptedException {
-		while(up > 0 || !locked) {
+		while(up > 0 || !locked && activeUp > 0) {
 			wait();
 		}
 		if (activeDown > enteredDown) {
