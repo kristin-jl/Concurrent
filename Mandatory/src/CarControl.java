@@ -193,6 +193,7 @@ class Car extends Thread {
 		   //curpos = startpos;
 		   active.V();
 		   removed = false;
+		   cd.mark(curpos, col, no);
        }
    }
    
