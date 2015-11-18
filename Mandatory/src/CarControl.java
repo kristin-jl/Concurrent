@@ -174,10 +174,7 @@ class Car extends Thread {
 	   if (!removed) {
 		   try {
 				active.P();
-		   } catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-		   	}
+		   } catch (InterruptedException e) {}
 		   removed = true;
 			   
 		   if (inAlley) {
@@ -212,6 +209,30 @@ class Car extends Thread {
             cd.mark(curpos,col,no);
             
             while (true) { 
+            	
+            	// Count active cars 1-4
+                
+                // For each car when the car has passed its gate it increments the active count
+                if (no != 0 && no < 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col|| 
+                		no >= 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col) {
+                	alleyMonitor.activeInc(no < 5 ? "up" : "down");
+                }
+                // For each car before the car passes its gate it decrements the active count
+                if (no != 0 && no < 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col|| 
+                		no >= 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col) {
+                	alleyMonitor.activeDec(no < 5 ? "up" : "down");
+                }
+                
+                // if the car has been removed at this point decrement the active counter
+                if (removed && no != 0) {
+             	   alleyMonitor.activeDec(no < 5 ? "up" : "down");
+             	   map[curpos.row][curpos.col].V();
+             	   curpos = startpos;
+                }
+                
+                active.P();
+                active.V();
+            	
                 sleep(speed());
                 
                 //cd.println(curpos.toString());
@@ -296,18 +317,7 @@ class Car extends Thread {
              	   bridge.leave();
                 }
                 
-                // Count active cars 1-4
                 
-                // For each car when the car has passed its gate it increments the active count
-                if (no != 0 && no < 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col|| 
-                		no >= 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col) {
-                	alleyMonitor.activeInc(no < 5 ? "up" : "down");
-                }
-                // For each car before the car passes its gate it decrements the active count
-                if (no != 0 && no < 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col|| 
-                		no >= 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col) {
-                	alleyMonitor.activeDec(no < 5 ? "up" : "down");
-                }
             }
 
         } catch (Exception e) {
