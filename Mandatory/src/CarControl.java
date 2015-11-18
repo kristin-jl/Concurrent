@@ -47,15 +47,9 @@ class Car extends Thread {
     Pos curpos;                      // Current position 
     Pos newpos;                      // New position to go to
     
-    static int activeUp;			 // Numbers of active cars from 1-4
-    static int activeDown;			 // Numbers of active cars from 5-8
-    static int enterUp;				 // Counter with modulo for cars 1-4
-    static int enterDown;			 // Counter with modulo for cars 5-8
-    
     boolean removed; 				 // Flag for removal of cars
     boolean inAlley;				 // Flag for alley
     
-    //private static Alley alley = new Alley();
     private AlleyMonitor alleyMonitor = new AlleyMonitor();
     private static Bridge bridge = new Bridge();
     
@@ -71,9 +65,9 @@ class Car extends Thread {
     	}
     }
     
+    // Semaphore used for the remove/restore functionality
     private Semaphore active = new Semaphore(1);
     
-    //private static Barrier barrier = new Barrier();
     private BarrierMonitor barrier;
 
     public Car(int no, CarDisplayI cd, Gate g, BarrierMonitor barrier) {
@@ -177,23 +171,24 @@ class Car extends Thread {
    }
    
    void removeCar() {
-	   
-	   try {
-		active.P();
-	   } catch (InterruptedException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	   }
-	   map[newpos.row][newpos.col].V();
-	   removed = true;
-	   
-	   if (inAlley) {
-		  if (no < 5 ) {
-			  alleyMonitor.leaveUp();
-		  }
-		  else {
-			  alleyMonitor.leaveDown();
-		  }
+	   if (!removed) {
+		   try {
+				active.P();
+			   } catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			   }
+			   map[newpos.row][newpos.col].V();
+			   removed = true;
+			   
+			   if (inAlley) {
+				  if (no < 5 ) {
+					  alleyMonitor.leaveUp();
+				  }
+				  else {
+					  alleyMonitor.leaveDown();
+				  }
+			   }
 	   }
    }
    
@@ -235,7 +230,6 @@ class Car extends Thread {
                 		alleyMonitor.enterDown();
                 		
                 	}
-                	//alley.enter(no);
                 	inAlley = true;
                 }
                 
@@ -246,8 +240,12 @@ class Car extends Thread {
             	   else {
             		   alleyMonitor.leaveDown();
             	   }
-            	   //alley.leave(no);
             	   inAlley = false;
+               }
+               
+               // if the car has been removed at this point decrement the active counter
+               if (removed && no != 0) {
+            	   alleyMonitor.activeDec(no < 5 ? "up" : "down");
                }
                
                active.P();
@@ -256,21 +254,32 @@ class Car extends Thread {
                newpos = nextPos(curpos);
                
                // check that there is not a another car on the next position
+               // car0 does not need to do this as it doesn't interfere with other cars
                if (no != 0)
             	   map[newpos.row][newpos.col].P();
                
-                //  Move to new position 
-                cd.clear(curpos);
-                cd.mark(curpos,newpos,col,no);
-                sleep(speed());
-                cd.clear(curpos,newpos);
-                cd.mark(newpos,col,no);
+                //  Move to new position if the car has not been removed
+               if (!removed){
+            	   cd.clear(curpos);
+                   cd.mark(curpos,newpos,col,no);
+                   sleep(speed());
+                   cd.clear(curpos,newpos);
+                   cd.mark(newpos,col,no); 
+               }
+                
                 
                 // leave the current position
                 if (no != 0)
                 	map[curpos.row][curpos.col].V();
 
                 curpos = newpos;
+                
+                // if the car has been removed at this point decrement the active counter
+                // and set the current position to the starting position
+                if (removed && no != 0) {
+             	   alleyMonitor.activeDec(no < 5 ? "up" : "down");
+             	   curpos = startpos;
+                }
                 
                 active.P();
                 active.V();
@@ -286,10 +295,13 @@ class Car extends Thread {
                 }
                 
                 // Count active cars 1-4
+                
+                // For each car when the car has passed its gate it increments the active count
                 if (no != 0 && no < 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col|| 
                 		no >= 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col) {
                 	alleyMonitor.activeInc(no < 5 ? "up" : "down");
                 }
+                // For each car before the car passes its gate it decrements the active count
                 if (no != 0 && no < 5 && curpos.row == startpos.row - 1 && curpos.col == startpos.col|| 
                 		no >= 5 && curpos.row == startpos.row + 1 && curpos.col == startpos.col) {
                 	alleyMonitor.activeDec(no < 5 ? "up" : "down");
@@ -310,7 +322,6 @@ public class CarControl implements CarControlI{
     CarDisplayI cd;           // Reference to GUI
     Car[]  car;               // Cars
     Gate[] gate;              // Gates
-    //private Barrier barrier = new Barrier();
     private BarrierMonitor barrier = new BarrierMonitor();
     private AlleyMonitor alley = new AlleyMonitor();
     private Bridge bridge = new Bridge();
@@ -356,7 +367,7 @@ public class CarControl implements CarControlI{
     }
 
     public void barrierShutDown() { 
-        cd.println("Barrier shut down not implemented in this version");
+        //cd.println("Barrier shut down not implemented in this version");
         // This sleep is for illustrating how blocking affects the GUI
         // Remove when shutdown is implemented.
         try {barrier.shutdown();} catch (InterruptedException e) { }
@@ -381,13 +392,13 @@ public class CarControl implements CarControlI{
     }
 
     public void removeCar(int no) { 
-        cd.println("Remove Car not implemented in this version");
+        //cd.println("Remove Car not implemented in this version");
         cd.clear(car[no].newpos);
         car[no].removeCar();
     }
 
     public void restoreCar(int no) { 
-        cd.println("Restore Car not implemented in this version");
+        //cd.println("Restore Car not implemented in this version");
         car[no].restoreCar();
     }
 

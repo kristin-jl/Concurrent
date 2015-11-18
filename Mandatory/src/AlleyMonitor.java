@@ -3,7 +3,7 @@ class AlleyMonitor {
 	private boolean locked;
 	
 	public synchronized void enterUp() throws InterruptedException {
-		while(down > 0 || locked && activeDown > 0) {
+		while(down > 0 || locked) {
 			wait();
 		}
 		if (activeUp > enteredUp) {
@@ -22,7 +22,7 @@ class AlleyMonitor {
 	}
 	
 	public synchronized void enterDown() throws InterruptedException {
-		while(up > 0 || !locked && activeUp > 0) {
+		while(up > 0 || !locked) {
 			wait();
 		}
 		if (activeDown > enteredDown) {
@@ -55,6 +55,7 @@ class AlleyMonitor {
 		notifyAll();
 	}
 	
+	// 
 	public synchronized void activeInc(String direction) {
 		switch(direction) {
 		case "up": 
@@ -83,5 +84,3 @@ class AlleyMonitor {
 		notifyAll();
 	}
 }
-
-// Change
