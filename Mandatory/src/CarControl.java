@@ -55,9 +55,6 @@ class Car extends Thread {
     boolean removed; 				 // Flag for removal of cars
     boolean inAlley;				 // Flag for alley
     
-    static Semaphore halt1 = new Semaphore(1);
-    static Semaphore halt2 = new Semaphore(1);
-    
     //private static Alley alley = new Alley();
     private AlleyMonitor alleyMonitor = new AlleyMonitor();
     private static Bridge bridge = new Bridge();

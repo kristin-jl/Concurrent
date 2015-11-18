@@ -4,17 +4,13 @@ class Bridge {
 	public static Semaphore mutex = new Semaphore(1);
 	
 	private static boolean active = false;
-
-	// pos.col >= 1 && pos.col <= 3 && pos.row >= 9 && pos.row <= 2
 	
 	public boolean isActive() {
 		return active;
 	}
 	
 	public void enter() throws InterruptedException{
-		mutex.P();
 		bridge.P();
-		mutex.V();
 	}
 	
 	public void leave() throws InterruptedException {
