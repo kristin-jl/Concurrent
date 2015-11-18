@@ -174,27 +174,26 @@ class Car extends Thread {
 	   if (!removed) {
 		   try {
 				active.P();
-			   } catch (InterruptedException e) {
+		   } catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			   }
-			   map[newpos.row][newpos.col].V();
-			   removed = true;
+		   	}
+		   removed = true;
 			   
-			   if (inAlley) {
-				  if (no < 5 ) {
-					  alleyMonitor.leaveUp();
-				  }
-				  else {
-					  alleyMonitor.leaveDown();
-				  }
+		   if (inAlley) {
+			   if (no < 5 ) {
+				   alleyMonitor.leaveUp();
 			   }
+			   else {
+				   alleyMonitor.leaveDown();
+			   }
+		   }
 	   }
    }
    
    void restoreCar() {
        if (removed) {
-		   curpos = startpos;
+		   //curpos = startpos;
 		   active.V();
 		   removed = false;
        }
@@ -246,6 +245,8 @@ class Car extends Thread {
                // if the car has been removed at this point decrement the active counter
                if (removed && no != 0) {
             	   alleyMonitor.activeDec(no < 5 ? "up" : "down");
+            	   map[curpos.row][curpos.col].V();
+            	   curpos = startpos;
                }
                
                active.P();
@@ -278,6 +279,7 @@ class Car extends Thread {
                 // and set the current position to the starting position
                 if (removed && no != 0) {
              	   alleyMonitor.activeDec(no < 5 ? "up" : "down");
+             	   map[curpos.row][curpos.col].V();
              	   curpos = startpos;
                 }
                 

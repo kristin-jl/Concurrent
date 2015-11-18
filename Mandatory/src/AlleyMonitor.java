@@ -7,7 +7,7 @@ class AlleyMonitor {
 			wait();
 		}
 		if (activeUp > enteredUp) {
-			while(locked) {
+			while(locked && down > 0) {
 				wait();
 			}
 			enteredUp++;
